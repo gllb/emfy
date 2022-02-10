@@ -18,6 +18,9 @@
 (set-face-foreground 'lazy-highlight "#ccc")
 (set-face-foreground 'font-lock-comment-face "#fc0")
 
+;; Show line number globally
+(global-display-line-numbers-mode)
+
 ;; Interactively do things.
 (ido-mode 1)
 (ido-everywhere)
@@ -74,7 +77,7 @@
   (package-refresh-contents))
 
 ;; Install packages.
-(dolist (package '(markdown-mode paredit rainbow-delimiters))
+(dolist (package '(markdown-mode paredit rainbow-delimiters impatient-mode markdown-mode))
   (unless (package-installed-p package)
     (package-install package)))
 
@@ -117,3 +120,16 @@
 (require 'server)
 (unless (server-running-p)
   (server-start))
+
+;; Enable Electric-pair mode.
+(electric-pair-mode)
+
+;; Impatient filter for markdown preview
+(defun markdown-filter (buffer)
+  (princ
+   (with-temp-buffer
+     (let ((tmpname (buffer-name)))
+       (set-buffer buffer)
+       (set-buffer (markdown tmpname)) ; the function markdown is in `markdown-mode.el'
+       (buffer-string)))
+   (current-buffer)))
