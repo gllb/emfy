@@ -7,16 +7,7 @@
   (scroll-bar-mode 0))
 (setq inhibit-startup-screen t)
 (column-number-mode)
-
-;; Dark theme.
-(load-theme 'wombat)
-(set-face-background 'default "#111")
-(set-face-background 'cursor "#c96")
-(set-face-background 'isearch "#c60")
-(set-face-foreground 'isearch "#eee")
-(set-face-background 'lazy-highlight "#960")
-(set-face-foreground 'lazy-highlight "#ccc")
-(set-face-foreground 'font-lock-comment-face "#fc0")
+(setq visible-bell 1)
 
 ;; Show line number globally
 (global-display-line-numbers-mode)
@@ -77,16 +68,9 @@
   (package-refresh-contents))
 
 ;; Install packages.
-(dolist (package '(markdown-mode use-package paredit rainbow-delimiters impatient-mode magit))
+(dolist (package '(markdown-mode use-package rainbow-delimiters impatient-mode))
   (unless (package-installed-p package)
     (package-install package)))
-
-;; Enable Paredit.
-(add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-(add-hook 'eval-expression-minibuffer-setup-hook 'enable-paredit-mode)
-(add-hook 'ielm-mode-hook 'enable-paredit-mode)
-(add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-(add-hook 'lisp-mode-hook 'enable-paredit-mode)
 
 ;; Enable Rainbow Delimiters.
 (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
@@ -115,6 +99,7 @@
 ;; Custom key sequences.
 (global-set-key (kbd "C-c t") 'show-current-time)
 (global-set-key (kbd "C-c d") 'delete-trailing-whitespace)
+(global-set-key (kbd "C-c o") 'browse-url-at-point)
 
 ;; Start server.
 (require 'server)
@@ -134,21 +119,29 @@
        (buffer-string)))
    (current-buffer)))
 
-;; Magit configuration
-(setq magit-repository-directories
-      `(("~/vcs" . 5)))
-
 ;; Load keychain configuration
 (keychain-refresh-environment)
 
 ;; Enable ffap-binding (find-file-at-point) C-u C-x C-f
-;; Does not work ??? coz of ido probably ...
 (ffap-bindings)
 (setq ffap-require-prefix t)
 
 (require 'use-package)
 
+(use-package solarized-theme
+  :ensure t
+  :config (load-theme 'solarized-light t))
+
+(use-package magit
+  :ensure t
+  :config
+  (setq magit-repository-directories
+      `(("~/vcs" . 5)))
+  )
+
 (use-package python-mode
+  :ensure t)
+(use-package terraform-mode
   :ensure t)
 
 ;; helm
@@ -163,7 +156,7 @@
          ("C-x r b" . helm-filtered-bookmarks) ;SC
          )
   ;; :preface (require 'helm-config)
-  :config (helm-mode 1))
+  :init (helm-mode 1))
 
 ;; projectile
 (use-package projectile
@@ -173,26 +166,30 @@
   :bind (:map projectile-mode-map
               ("C-c p". projectile-command-map))
   :config
-  (setq projectile-project-search-path '(("~/vcs" . 5)))
+  (setq projectile-project-search-path '(("~/vcs" . 10)))
+  (setq projectile-switch-project-action 'projectile-vc)
   )
 
 ;; LSP
 (use-package lsp-mode
+  :ensure t
   :init
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
 
          (python-mode . lsp)
+         ;; https://github.com/juliosueiras/terraform-lsp
          (terraform-mode . lsp)
-         ;; (terraform-mode . lsp)
          ;; if you want which-key integration
 
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp)
 
 ;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode)
 ;; if you are helm user
 ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 ;; if you are ivy user
@@ -208,4 +205,12 @@
 ;; :config
 ;; (which-key-mode))
 
-;; Treemacs
+(use-package json-mode
+  :ensure t)
+
+;;(use-package forge
+;;  :ensure t
+;;  :init
+;;  (setq auth-sources '("~/.authinfo.gpg"))
+;;  :after magit)
+(put 'upcase-region 'disabled nil)
