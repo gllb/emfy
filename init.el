@@ -167,7 +167,7 @@
   :bind (:map projectile-mode-map
               ("C-c p". projectile-command-map))
   :config
-  (setq projectile-project-search-path '(("~/vcs" . 10)))
+  (setq projectile-project-search-path '(("~/vcs" . 7)))
   (setq projectile-switch-project-action 'projectile-vc)
   )
 
