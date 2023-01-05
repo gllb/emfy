@@ -143,6 +143,13 @@
 (use-package python-mode
   :ensure t)
 (use-package terraform-mode
+  :ensure t
+  :init
+  (setq lsp-disabled-clients '(tfls)))
+
+(use-package json-mode
+  :ensure t)
+(use-package dockerfile-mode
   :ensure t)
 
 ;; helm
@@ -182,8 +189,8 @@
          (python-mode . lsp)
          ;; https://github.com/juliosueiras/terraform-lsp
          (terraform-mode . lsp)
+         (dockerfile-mode . lsp)
          ;; if you want which-key integration
-
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp)
 
