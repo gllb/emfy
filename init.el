@@ -1,3 +1,4 @@
+;;; Commentary:
 ;;; Emfy 0.2.0 <https://github.com/susam/emfy>
 
 ;; Customize user interface.
@@ -205,12 +206,18 @@
 ;; :config
 ;; (which-key-mode))
 
-(use-package json-mode
+(use-package ghub
   :ensure t)
 
-;;(use-package forge
-;;  :ensure t
-;;  :init
-;;  (setq auth-sources '("~/.authinfo.gpg"))
-;;  :after magit)
+(use-package forge
+  :ensure t
+  :config
+  (setq auth-sources '("~/.authinfo.gpg"))
+  (add-to-list 'forge-alist
+               '("git.payplug.com" "git.payplug.com/api/v4" "payplug" forge-gitlab-repository))
+  :after magit)
+
 (put 'upcase-region 'disabled nil)
+
+
+;;; init.el ends here
